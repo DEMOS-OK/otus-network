@@ -1,0 +1,48 @@
+version: "3.7"
+services:
+  ha-network-nginx:
+    image: nginx:stable-alpine
+    container_name: ha-network-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./.docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./src:/var/www/html
+      - ./.docker/nginx/logs:/var/log/nginx
+    networks:
+      - ha-network
+
+  ha-network-fpm:
+    build:
+      args:
+        user: network-user
+        uid: 1000
+      context: .
+      dockerfile: .docker/php-fpm/Dockerfile
+    container_name: ha-network-fpm
+    image: php:8.2
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    networks:
+      - ha-network
+
+  ha-network-postgres:
+    image: postgres
+    container_name: ha-network-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.docker/postgres/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=network
+    networks:
+      - ha-network
+
+networks:
+  ha-network:
+    driver: bridge
