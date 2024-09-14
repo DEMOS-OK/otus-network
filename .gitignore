@@ -55,3 +55,7 @@ Thumbs.db
 *.avi
 *.flv
 *.wmv
+
+.docker/nginx/logs/
+.docker/postgres/
+.docker/php-fpm/
