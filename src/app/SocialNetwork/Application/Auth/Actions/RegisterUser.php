@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\SocialNetwork\Application\Auth;
+namespace App\SocialNetwork\Application\Auth\Actions;
 
 use App\SocialNetwork\Application\Auth\DTO\RegisterUserDTO;
 use App\SocialNetwork\Application\Auth\Exceptions\InvalidPasswordConfirmationException;
@@ -29,7 +29,7 @@ final readonly class RegisterUser
 
         $user = User::make()
             ->setName($dto->getFirstname() . $dto->getLastname())
-            ->setPassword($dto->getPassword())
+            ->setPassword(password_hash($dto->getPassword(), PASSWORD_BCRYPT))
             ->setEmailVerifiedAt(Carbon::now()->format("Y-m-d H:i:s"))
             ->setEmail($dto->getEmail())
             ->setInfo(
