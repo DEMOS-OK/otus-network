@@ -8,6 +8,7 @@ use App\SocialNetwork\Domain\User\Entities\User;
 use App\SocialNetwork\Domain\User\Entities\UserInfo;
 use App\SocialNetwork\Domain\User\Enums\GenderEnum;
 use App\SocialNetwork\Domain\User\Repositories\UserRepositoryInterface;
+use Illuminate\Support\Collection;
 use PDO;
 
 final readonly class PdoUserRepository implements UserRepositoryInterface
@@ -89,6 +90,31 @@ final readonly class PdoUserRepository implements UserRepositoryInterface
         }
 
         return $this->mapArrayToEntity($data);
+    }
+
+    public function findByInitials(string $firstname, string $lastname): Collection
+    {
+        $query = "SELECT u.*, ui.id as user_info_id, ui.firstname, ui.lastname, 
+                     ui.date_of_birth, ui.gender, ui.about, ui.city 
+              FROM users u
+              JOIN user_infos ui ON u.id = ui.user_id
+              WHERE ui.firstname LIKE :firstname 
+                AND ui.lastname LIKE :lastname";
+
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindValue(':firstname', $firstname . '%');
+        $stmt->bindValue(':lastname', $lastname . '%');
+        $stmt->execute();
+
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $users = new Collection();
+
+        foreach ($results as $data) {
+            $users->push($this->mapArrayToEntity($data));
+        }
+
+        return $users;
     }
 
     private function mapArrayToEntity(array $data): User
