@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\SocialNetwork\Domain\User\Enums;
 
 enum GenderEnum: int

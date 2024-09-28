@@ -1,24 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
-use App\SocialNetwork\Domain\User\Entities\User;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-
-class DatabaseSeeder extends Seeder
+final class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        for ($i = 0; $i < 5000; $i++) {
+            User::factory()->count(200)->create();
+        }
     }
 }
