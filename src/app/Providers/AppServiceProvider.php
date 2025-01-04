@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\SocialNetwork\Domain\User\Repositories\UserRepositoryInterface;
+use App\SocialNetwork\Infrastructure\PDOConnectionWrapper;
 use App\SocialNetwork\Infrastructure\Repositories\PdoUserRepository;
 use Illuminate\Support\ServiceProvider;
 use PDO;
@@ -14,12 +15,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(PDO::class, static function () {
+        $this->app->singleton(PDOConnectionWrapper::class, static function () {
             $dbConfig = config('database.connections.pgsql');
-            return new PDO(
-                "pgsql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['database']}",
-                $dbConfig['username'],
-                $dbConfig['password'],
+
+            $writeHost = $dbConfig['write']['host'][0];
+            $readHost = $dbConfig['read']['host'][random_int(0, count($dbConfig['read']['host']) - 1)];
+            return new PDOConnectionWrapper(
+                writeConnection: new PDO(
+                    "pgsql:host={$writeHost};port={$dbConfig['port']};dbname={$dbConfig['database']}",
+                    $dbConfig['username'],
+                    $dbConfig['password'],
+                ),
+                readConnection: new PDO(
+                    "pgsql:host={$readHost};port={$dbConfig['port']};dbname={$dbConfig['database']}",
+                    $dbConfig['username'],
+                    $dbConfig['password'],
+                ),
             );
         });
 

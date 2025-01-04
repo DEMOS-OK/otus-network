@@ -83,6 +83,17 @@ return [
         ],
 
         'pgsql' => [
+            'read' => [
+                'host' => [
+                    'ha-network-postgres-slave1',
+                    'ha-network-postgres-slave2',
+                ],
+            ],
+            'write' => [
+                'host' => [
+                    env('DB_HOST', '127.0.0.1')
+                ],
+            ],
             'driver' => 'pgsql',
             'url' => env('DB_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),

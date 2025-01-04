@@ -75,6 +75,12 @@ Before using the application, you will need to run the database migrations:
 ```bash
    php artisan migrate
 ```
+
+3. Install composer packages
+```bash
+    php composer.phar install
+```
+
 ## Directory Structure
 
 - `./src` - The main application source code
