@@ -81,6 +81,8 @@ Before using the application, you will need to run the database migrations:
     php composer.phar install
 ```
 
+4. Move the postgres configs from postgres/config to needle postgres/data directory
+
 ## Directory Structure
 
 - `./src` - The main application source code
