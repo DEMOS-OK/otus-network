@@ -68,7 +68,7 @@ final class AuthController extends Controller
 
             return new JsonResponse([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => 'Internal server error',
             ], 500);
         }
     }

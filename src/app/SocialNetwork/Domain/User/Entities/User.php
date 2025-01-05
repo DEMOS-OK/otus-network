@@ -6,7 +6,7 @@ namespace App\SocialNetwork\Domain\User\Entities;
 
 final class User extends Entity
 {
-    private int $id;
+    private ?int $id = null;
 
     private string $name;
 
@@ -20,12 +20,12 @@ final class User extends Entity
 
     private UserInfo $info;
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId(?int $id): self
     {
         $this->id = $id;
 

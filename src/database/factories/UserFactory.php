@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Models\User;
-use App\Models\UserInfo;
+use App\SocialNetwork\Infrastructure\Repositories\Eloquent\Models\User;
+use App\SocialNetwork\Infrastructure\Repositories\Eloquent\Models\UserInfo;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;

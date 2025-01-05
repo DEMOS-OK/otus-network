@@ -8,7 +8,7 @@ use App\SocialNetwork\Domain\User\Enums\GenderEnum;
 
 final class UserInfo extends Entity
 {
-    private int $id;
+    private ?int $id = null;
 
     private string $name;
 
@@ -22,12 +22,12 @@ final class UserInfo extends Entity
 
     private string $city;
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId(?int $id): self
     {
         $this->id = $id;
 
@@ -108,8 +108,7 @@ final class UserInfo extends Entity
 
     public function toArray(): array
     {
-        return [
-            'id' => $this->id,
+        $data = [
             'firstname' => $this->name,
             'lastname' => $this->lastname,
             'date_of_birth' => $this->dateOfBirth,
@@ -117,5 +116,11 @@ final class UserInfo extends Entity
             'about' => $this->about,
             'city' => $this->city,
         ];
+
+        if ($this->id !== null) {
+            $data['id'] = $this->id;
+        }
+
+        return $data;
     }
 }
