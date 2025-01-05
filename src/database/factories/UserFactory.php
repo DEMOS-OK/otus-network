@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\SocialNetwork\Infrastructure\Repositories\Eloquent\Models\User;
+use App\Models\User;
 use App\SocialNetwork\Infrastructure\Repositories\Eloquent\Models\UserInfo;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -31,7 +31,11 @@ final class UserFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'email' => substr(md5((string) random_int(100000000, 999999999)), 0, 6) . substr(md5((string) random_int(100000000, 999999999)), 0, 20) . '@gmail.com',
+            'email' => substr(md5((string)random_int(100000000, 999999999)), 0, 6) . substr(
+                    md5((string)random_int(100000000, 999999999)),
+                    0,
+                    20
+                ) . '@gmail.com',
             'email_verified_at' => now(),
             'password' => self::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
@@ -43,7 +47,7 @@ final class UserFactory extends Factory
      */
     public function unverified(): self
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }

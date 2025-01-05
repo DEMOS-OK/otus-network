@@ -23,7 +23,7 @@ final class AuthController extends Controller
     public function login(LoginRequest $request, LoginUser $loginUser): JsonResponse
     {
         try {
-            $user = $loginUser($request->data());
+            $user = $loginUser($request->dto());
         } catch (BadCredentialsException) {
             return new JsonResponse([
                 'success' => false,
@@ -50,7 +50,7 @@ final class AuthController extends Controller
     public function register(RegisterRequest $request, RegisterUser $registerUser): JsonResponse
     {
         try {
-            $user = $registerUser($request->data());
+            $user = $registerUser($request->dto());
 
             return new JsonResponse([
                 'success' => true,

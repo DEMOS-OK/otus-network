@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\SocialNetwork\Infrastructure\Repositories\Eloquent;
 
+use App\Models\User as UserModel;
 use App\SocialNetwork\Domain\User\Entities\User;
 use App\SocialNetwork\Domain\User\Entities\UserInfo;
 use App\SocialNetwork\Domain\User\Enums\GenderEnum;
 use App\SocialNetwork\Domain\User\Repositories\UserRepositoryInterface;
-use App\SocialNetwork\Infrastructure\Repositories\Eloquent\Models\User as UserModel;
 use App\SocialNetwork\Infrastructure\Repositories\Eloquent\Models\UserInfo as UserInfoModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;

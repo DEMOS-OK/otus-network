@@ -11,28 +11,26 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
- * @property string $firstname
- * @property string $lastname
- * @property string $date_of_birth
- * @property string $gender
- * @property string $about
- * @property string $city
  * @property int $user_id
+ * @property string $content
+ * @property string $created_at
+ * @property string $updated_at
  */
-final class UserInfo extends Model
+final class Post extends Model
 {
     use HasFactory;
 
-    protected $table = 'user_infos';
+    protected $table = 'posts';
 
     protected $fillable = [
-        'firstname',
-        'lastname',
-        'date_of_birth',
-        'city',
-        'about',
-        'gender',
+        'id',
+        'title',
+        'user_id',
+        'content',
+        'created_at',
+        'updated_at',
     ];
+
 
     public function user(): BelongsTo
     {

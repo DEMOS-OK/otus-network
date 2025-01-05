@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\SocialNetwork\Infrastructure\Repositories\Eloquent\Models;
+namespace App\Models;
 
+use App\SocialNetwork\Infrastructure\Repositories\Eloquent\Models\UserInfo;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

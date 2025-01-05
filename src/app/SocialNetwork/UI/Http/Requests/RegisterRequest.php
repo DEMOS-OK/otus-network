@@ -24,7 +24,7 @@ final class RegisterRequest extends ApiRequest
         ];
     }
 
-    public function data(): RegisterUserDTO
+    public function dto(): RegisterUserDTO
     {
         return new RegisterUserDTO(
             $this->input('firstname'),

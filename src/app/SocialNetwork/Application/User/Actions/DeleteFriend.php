@@ -24,7 +24,9 @@ final readonly class DeleteFriend
         $friend = ($this->findUser)($friendId);
 
         $user->removeFriend($friend);
-
         $this->userRepository->save($user);
+
+        $friend->removeFriend($user);
+        $this->userRepository->save($friend);
     }
 }

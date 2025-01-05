@@ -24,7 +24,9 @@ final readonly class AddFriend
         $friend = ($this->findUser)($friendId);
 
         $user->addFriend($friend);
-
         $this->userRepository->save($user);
+
+        $friend->addFriend($user);
+        $this->userRepository->save($friend);
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Database\Factories\SocialNetwork\Infrastructure\Repositories\Eloquent\Models;
 
 use App\SocialNetwork\Infrastructure\Repositories\Eloquent\Models\UserInfo;
 use Illuminate\Database\Eloquent\Factories\Factory;

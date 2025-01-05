@@ -16,7 +16,7 @@ final class LoginRequest extends ApiRequest
         ];
     }
 
-    public function data(): LoginUserDTO
+    public function dto(): LoginUserDTO
     {
         return (new LoginUserDTO(
             $this->input('email'),
