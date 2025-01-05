@@ -12,6 +12,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ApiRequest extends FormRequest
 {
+    public function userId(): ?int
+    {
+        return $this->integer('user_id', null);
+    }
+
     protected function failedValidation(Validator $validator): void
     {
         $errors = (new ValidationException($validator))->errors();

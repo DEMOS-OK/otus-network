@@ -17,6 +17,10 @@ final class EloquentUserRepository implements UserRepositoryInterface
 {
     public function save(User $user): User
     {
+        if ($user->getId() !== null) {
+            return $this->update($user);
+        }
+
         $userModel = $this->mapUserEntityToUserModel($user);
         $userModel->save();
 
@@ -25,25 +29,26 @@ final class EloquentUserRepository implements UserRepositoryInterface
         return $this->mapUserModelToUserEntity($userModel);
     }
 
-    private function mapUserEntityToUserModel(User $user): UserModel
+    private function update(User $user): User
     {
-        $userModel = new UserModel();
-        if ($user->getId() !== null) {
-            $userModel->id = $user->getId();
-        }
+        $userModel = UserModel::query()->find($user->getId());
+        $userModel->update($user->toArray());
 
-        $userModel->name = $user->getName();
-        $userModel->email = $user->getEmail();
-        $userModel->password = $user->getPassword();
+        $this->updateRelations($userModel, $user);
 
-        return $userModel;
+        return $this->mapUserModelToUserEntity($userModel);
     }
 
-    private function saveRelations(UserModel $userModel, User $user): void
+    private function updateRelations(UserModel $userModel, User $user): void
     {
         $userInfoModel = $this->mapUserInfoEntityToUserInfoModel($user->getInfo());
 
-        $userModel->info()->save($userInfoModel);
+        // Update user info
+        $userModel->info()->update($userInfoModel->toArray());
+
+        // Update friends
+        $friends = Collection::make($user->getFriends());
+        $userModel->friends()->sync($friends->map(fn(User $friend) => $friend->getId()));
     }
 
     private function mapUserInfoEntityToUserInfoModel(UserInfo $userInfoEntity): UserInfoModel
@@ -71,8 +76,15 @@ final class EloquentUserRepository implements UserRepositoryInterface
         $user->setPassword($model->password);
         $user->setEmailVerifiedAt($model->email_verified_at?->toDateTimeString());
         $user->setRememberToken($model->remember_token);
-        if ($model->info !== null) {
+        if ($model->relationLoaded('info')) {
             $user->setInfo($this->mapUserInfoModelToUserInfoEntity($model->info));
+        }
+        if ($model->relationLoaded('friends')) {
+            $friends = [];
+            foreach ($model->friends as $friend) {
+                $friends[] = $this->mapUserModelToUserEntity($friend);
+            }
+            $user->setFriends($friends,);
         }
 
         return $user;
@@ -92,9 +104,35 @@ final class EloquentUserRepository implements UserRepositoryInterface
         return $userInfo;
     }
 
+    private function mapUserEntityToUserModel(User $user): UserModel
+    {
+        $userModel = new UserModel();
+        if ($user->getId() !== null) {
+            $userModel->id = $user->getId();
+        }
+
+        $userModel->name = $user->getName();
+        $userModel->email = $user->getEmail();
+        $userModel->password = $user->getPassword();
+
+        return $userModel;
+    }
+
+    private function saveRelations(UserModel $userModel, User $user): void
+    {
+        $userInfoModel = $this->mapUserInfoEntityToUserInfoModel($user->getInfo());
+
+        // Save user info
+        $userModel->info()->save($userInfoModel);
+
+        // Save friends
+        $friends = Collection::make($user->getFriends());
+        $userModel->friends()->attach($friends->map(fn(User $friend) => $friend->getId()));
+    }
+
     public function findById(int $id): ?User
     {
-        $userModel = UserModel::query()->with(['info'])->find($id);
+        $userModel = UserModel::query()->with(['info', 'friends'])->find($id);
 
         if ($userModel === null) {
             return null;
@@ -126,5 +164,16 @@ final class EloquentUserRepository implements UserRepositoryInterface
             )->get();
 
         return $userModels->map(fn(UserModel $userModel) => $this->mapUserModelToUserEntity($userModel));
+    }
+
+    public function getFriendsForUser(int $userId): Collection
+    {
+        $userModel = UserModel::query()->with(['friends'])->find($userId);
+
+        if ($userModel === null) {
+            return new Collection();
+        }
+
+        return $userModel->friends->map(fn(UserModel $userModel) => $this->mapUserModelToUserEntity($userModel));
     }
 }

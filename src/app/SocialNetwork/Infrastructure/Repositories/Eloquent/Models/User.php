@@ -6,9 +6,11 @@ namespace App\SocialNetwork\Infrastructure\Repositories\Eloquent\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 
 /**
  * @property int $id
@@ -18,6 +20,7 @@ use Illuminate\Notifications\Notifiable;
  * @property string $remember_token
  * @property Carbon $email_verified_at
  * @property UserInfo $info
+ * @property Collection<User> $friends
  */
 final class User extends Authenticatable
 {
@@ -57,5 +60,10 @@ final class User extends Authenticatable
     public function info(): HasOne
     {
         return $this->hasOne(UserInfo::class);
+    }
+
+    public function friends(): BelongsToMany
+    {
+        return $this->belongsToMany(__CLASS__, 'friends', 'user_id', 'friend_id');
     }
 }

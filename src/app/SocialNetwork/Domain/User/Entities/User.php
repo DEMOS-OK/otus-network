@@ -18,19 +18,12 @@ final class User extends Entity
 
     private ?string $remember_token;
 
-    private UserInfo $info;
+    private ?UserInfo $info = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function setId(?int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
-    }
+    /**
+     * @var array<User>
+     */
+    private array $friends;
 
     public function getName(): string
     {
@@ -104,13 +97,51 @@ final class User extends Entity
         return $this;
     }
 
+    public function getFriends(): array
+    {
+        return $this->friends;
+    }
+
+    public function setFriends(array $friends): self
+    {
+        $this->friends = $friends;
+
+        return $this;
+    }
+
+    public function addFriend(User $friend): self
+    {
+        $this->friends[] = $friend;
+
+        return $this;
+    }
+
+    public function removeFriend(User $friend): self
+    {
+        $this->friends = array_filter($this->friends, static fn(User $f) => $f->getId() !== $friend->getId());
+
+        return $this;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function setId(?int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         return [
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'info' => $this->info->toArray(),
+            'info' => $this->info?->toArray(),
         ];
     }
 }

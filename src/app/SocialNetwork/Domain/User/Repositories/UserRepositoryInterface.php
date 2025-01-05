@@ -19,4 +19,9 @@ interface UserRepositoryInterface
      * @return Collection<User>
      */
     public function findByInitials(string $firstname, string $lastname): Collection;
+
+    /**
+     * @return Collection<User>
+     */
+    public function getFriendsForUser(int $userId): Collection;
 }

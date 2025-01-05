@@ -12,6 +12,9 @@ use App\SocialNetwork\Infrastructure\PDOConnectionWrapper;
 use Illuminate\Support\Collection;
 use PDO;
 
+/**
+ * @DEPRECATED This class is not supported anymore. Use EloquentUserRepository instead.
+ */
 final readonly class PdoUserRepository implements UserRepositoryInterface
 {
     public function __construct(
@@ -32,7 +35,7 @@ final readonly class PdoUserRepository implements UserRepositoryInterface
 
         $userId = $this->pdo->write()->lastInsertId();
 
-        $user->setId((int) $userId);
+        $user->setId((int)$userId);
 
         $query = "INSERT INTO user_infos (firstname, lastname, date_of_birth, gender, about, city, user_id)
               VALUES (:firstname, :lastname, :dateOfBirth, :gender, :about, :city, :userId)";
@@ -47,7 +50,7 @@ final readonly class PdoUserRepository implements UserRepositoryInterface
         $stmt->bindValue(':userId', $userId);
         $stmt->execute();
 
-        $user->getInfo()->setId((int) $this->pdo->write()->lastInsertId());
+        $user->getInfo()->setId((int)$this->pdo->write()->lastInsertId());
 
         return $user;
     }
@@ -70,6 +73,29 @@ final readonly class PdoUserRepository implements UserRepositoryInterface
         }
 
         return $this->mapArrayToEntity($data);
+    }
+
+    private function mapArrayToEntity(array $data): User
+    {
+        $user = User::make()
+            ->setName($data['name'])
+            ->setPassword($data['password'])
+            ->setEmailVerifiedAt($data['email_verified_at'])
+            ->setEmail($data['email'])
+            ->setInfo(
+                UserInfo::make()
+                    ->setName($data['firstname'])
+                    ->setLastname($data['lastname'])
+                    ->setGender(GenderEnum::from($data['gender']))
+                    ->setAbout($data['about'])
+                    ->setCity($data['city'])
+                    ->setDateOfBirth($data['date_of_birth'])
+            );
+
+        $user->setId((int)$data['id']);
+        $user->getInfo()->setId((int)$data['user_info_id']);
+
+        return $user;
     }
 
     public function findByEmail(string $email): ?User
@@ -117,28 +143,5 @@ final readonly class PdoUserRepository implements UserRepositoryInterface
         }
 
         return $users;
-    }
-
-    private function mapArrayToEntity(array $data): User
-    {
-        $user = User::make()
-            ->setName($data['name'])
-            ->setPassword($data['password'])
-            ->setEmailVerifiedAt($data['email_verified_at'])
-            ->setEmail($data['email'])
-            ->setInfo(
-                UserInfo::make()
-                    ->setName($data['firstname'])
-                    ->setLastname($data['lastname'])
-                    ->setGender(GenderEnum::from($data['gender']))
-                    ->setAbout($data['about'])
-                    ->setCity($data['city'])
-                    ->setDateOfBirth($data['date_of_birth'])
-            );
-
-        $user->setId((int) $data['id']);
-        $user->getInfo()->setId((int) $data['user_info_id']);
-
-        return $user;
     }
 }
